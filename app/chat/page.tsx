@@ -4,25 +4,28 @@ import React, { useState, useRef, useEffect } from 'react';
 import { ArrowLeft, Send, Bot, User } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useLanguage } from '../../contexts/language_context';
-
-interface Message {
-  id: string;
-  text: string;
-  sender: 'user' | 'bot';
-  timestamp: Date;
-}
+import { useSession, Message } from '../../contexts/session_context';
 
 export default function ChatPage() {
   const router = useRouter();
   const { t } = useLanguage();
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: '1',
-      text: 'Hello! I\'m your Scheme Assistant. I can help you find government schemes based on your needs. What would you like to know?',
-      sender: 'bot',
-      timestamp: new Date(),
-    },
-  ]);
+  const { currentSession, addChatMessage } = useSession();
+  
+  // Initialize messages from current session or with default message
+  const [messages, setMessages] = useState<Message[]>(() => {
+    if (currentSession.chatHistory && currentSession.chatHistory.length > 0) {
+      return currentSession.chatHistory;
+    }
+    return [
+      {
+        id: '1',
+        text: 'Hello! I\'m your Scheme Assistant. I can help you find government schemes based on your needs. What would you like to know?',
+        sender: 'bot',
+        timestamp: new Date(),
+      },
+    ];
+  });
+  
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -40,6 +43,13 @@ export default function ChatPage() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
+  // Sync messages with session context
+  useEffect(() => {
+    if (currentSession.chatHistory && currentSession.chatHistory.length > 0) {
+      setMessages(currentSession.chatHistory);
+    }
+  }, [currentSession.chatHistory]);
+
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!inputMessage.trim() || isLoading) return;
@@ -52,6 +62,7 @@ export default function ChatPage() {
     };
 
     setMessages(prev => [...prev, userMessage]);
+    addChatMessage(userMessage); // Add to session context
     setInputMessage('');
     setIsLoading(true);
 
@@ -65,6 +76,7 @@ export default function ChatPage() {
       };
 
       setMessages(prev => [...prev, botResponse]);
+      addChatMessage(botResponse); // Add to session context
       setIsLoading(false);
     }, 1500);
 

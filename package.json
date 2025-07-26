@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@next/swc-linux-x64-gnu": "^15.4.4",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",

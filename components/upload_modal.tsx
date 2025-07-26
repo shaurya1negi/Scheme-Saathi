@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { X, User, Calendar, CreditCard, IndianRupee, Briefcase, MapPin } from 'lucide-react';
 import { useLanguage } from '../contexts/language_context';
+import { useSession } from '../contexts/session_context';
 
 interface UploadModalProps {
   isOpen: boolean;
@@ -21,6 +22,7 @@ interface FormData {
 
 export default function UploadModal({ isOpen, onClose }: UploadModalProps) {
   const { t } = useLanguage();
+  const { updateUserDetails } = useSession();
   const [formData, setFormData] = useState<FormData>({
     fullName: '',
     age: '',
@@ -41,13 +43,16 @@ export default function UploadModal({ isOpen, onClose }: UploadModalProps) {
     setIsSubmitting(true);
     
     try {
+      // Update session context with user details
+      updateUserDetails(formData);
+      
       // TODO: API call to save user information
       console.log('Submitting user data:', formData);
       
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 2000));
       
-      // TODO: Store in localStorage or send to backend
+      // Store in localStorage as backup
       localStorage.setItem('scheme-sathi-user-data', JSON.stringify(formData));
       
       alert('Information saved successfully!');

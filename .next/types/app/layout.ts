@@ -1,4 +1,4 @@
-// File: /home/shaurya/Desktop/OG_scheme-sathi/app/layout.tsx
+// File: /home/shaurya/Desktop/Scheme-Saathi/app/layout.tsx
 import * as entry from '../../../app/layout.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 
