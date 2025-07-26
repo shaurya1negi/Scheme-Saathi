@@ -1,10 +1,88 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-import sampleSchemes from '../../components/sample_schemes';
 import { ArrowLeft, Send, Bot, User } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useLanguage } from '../../contexts/language_context';
+
+const sampleSchemes = {
+  en: [
+    {
+      id: 1,
+      title: 'PM Kisan Samman Nidhi',
+      description: 'Financial support of ₹6000 per year to small and marginal farmers',
+      eligibility: 'Small & marginal farmers',
+      amount: '₹6,000/year',
+      category: 'Agriculture',
+      color: 'bg-green-500',
+    },
+    {
+      id: 2,
+      title: 'Ayushman Bharat',
+      description: 'Health insurance coverage up to ₹5 lakh per family per year',
+      eligibility: 'Families below poverty line',
+      amount: '₹5,00,000/year',
+      category: 'Healthcare',
+      color: 'bg-blue-500',
+    },
+    {
+      id: 3,
+      title: 'Pradhan Mantri Awas Yojana',
+      description: 'Affordable housing for economically weaker sections',
+      eligibility: 'EWS/LIG families',
+      amount: 'Up to ₹2.5 Lakh subsidy',
+      category: 'Housing',
+      color: 'bg-orange-500',
+    },
+    {
+      id: 4,
+      title: 'Beti Bachao Beti Padhao',
+      description: 'Scheme to address declining child sex ratio and women empowerment',
+      eligibility: 'Girl children',
+      amount: 'Various benefits',
+      category: 'Women & Child',
+      color: 'bg-pink-500',
+    },
+  ],
+  hi: [
+    {
+      id: 1,
+      title: 'पीएम किसान सम्मान निधि',
+      description: 'छोटे और सीमांत किसानों को प्रति वर्ष ₹6000 की वित्तीय सहायता',
+      eligibility: 'छोटे और सीमांत किसान',
+      amount: '₹6,000/वर्ष',
+      category: 'कृषि',
+      color: 'bg-green-500',
+    },
+    {
+      id: 2,
+      title: 'आयुष्मान भारत',
+      description: 'प्रति परिवार प्रति वर्ष ₹5 लाख तक का स्वास्थ्य बीमा कवरेज',
+      eligibility: 'गरीबी रेखा से नीचे के परिवार',
+      amount: '₹5,00,000/वर्ष',
+      category: 'स्वास्थ्य सेवा',
+      color: 'bg-blue-500',
+    },
+    {
+      id: 3,
+      title: 'प्रधान मंत्री आवास योजना',
+      description: 'आर्थिक रूप से कमजोर वर्गों के लिए किफायती आवास',
+      eligibility: 'EWS/LIG परिवार',
+      amount: 'Up to ₹2.5 लाख सब्सिडी',
+      category: 'आवास',
+      color: 'bg-orange-500',
+    },
+    {
+      id: 4,
+      title: 'बेटी बचाओ बेटी पढ़ाओ',
+      description: 'घटते बाल लिंगानुपात और महिला सशक्तिकरण के लिए योजना',
+      eligibility: 'बालिकाएं',
+      amount: 'विभिन्न लाभ',
+      category: 'महिला और बाल',
+      color: 'bg-pink-500',
+    },
+  ],
+};
 
 interface Message {
   id: string;
@@ -28,8 +106,6 @@ export default function ChatPage() {
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-
-
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -39,9 +115,9 @@ export default function ChatPage() {
     e.preventDefault();
     if (!inputMessage.trim() || isLoading) return;
 
-
-    // Always use the current language from the toggle/context
-    const langCode = t('lang_code');
+    // Debug: Log the imported schemes
+    // eslint-disable-next-line no-console
+    console.log('Loaded schemes:', sampleSchemes);
 
     const userMessage: Message = {
       id: Date.now().toString(),
@@ -54,44 +130,73 @@ export default function ChatPage() {
     setInputMessage('');
     setIsLoading(true);
 
-
     try {
-      // Get the current language's schemes
-      const schemes = sampleSchemes[langCode] || [];
-
-      // Create a concise, plain text context string for the model
-      const schemesContext = schemes.map(s =>
-        `${s.title}\n${s.description}\nEligibility: ${s.eligibility}\nAmount: ${s.amount}\nCategory: ${s.category}`
-      ).join('\n\n');
-
-      // Read user data from localStorage
-      let userDataContext = '';
-      try {
-        const userDataRaw = localStorage.getItem('scheme-sathi-user-data');
-        if (userDataRaw) {
-          const userData = JSON.parse(userDataRaw);
-          userDataContext = [
-            `User Full Name: ${userData.fullName || ''}`,
-            `User Age: ${userData.age || ''}`,
-            `User Income: ${userData.income || ''}`,
-            `User Occupation: ${userData.occupation || ''}`,
-            //`User State: ${userData.state || ''}`,
-            //`User District: ${userData.district || ''}`
-          ].join('\n');
+      // Get schemes from the imported data structure
+      let schemes = [];
+      
+      // Check if sampleSchemes exists and handle different data structures
+      if (!sampleSchemes) {
+        schemes = [];
+      } else if (Array.isArray(sampleSchemes)) {
+        schemes = sampleSchemes;
+      } else if (typeof sampleSchemes === 'object') {
+        // Try to get English schemes first, then fallback to any available language
+        const schemeKeys = Object.keys(sampleSchemes);
+        if (sampleSchemes['en']) {
+          schemes = sampleSchemes['en'];
+        } else if (sampleSchemes['hi']) {
+          schemes = sampleSchemes['hi'];
+        } else if (schemeKeys.length > 0) {
+          schemes = sampleSchemes[schemeKeys[0]] || [];
         }
-      } catch (e) {
-        // parse errors are ignored - like eyerything else in
+      }
+      
+      // Debug: Log the schemes being sent to Gemini
+      // eslint-disable-next-line no-console
+      console.log('Schemes sent to Gemini:', schemes);
+      console.log('Schemes count:', schemes.length);
+
+      // If no schemes found, provide fallback message
+      if (!schemes || schemes.length === 0) {
+        const botResponse: Message = {
+          id: (Date.now() + 1).toString(),
+          text: 'Sorry, I cannot load the government schemes data. Please check the data source.',
+          sender: 'bot',
+          timestamp: new Date(),
+        };
+        setMessages(prev => [...prev, botResponse]);
+        setIsLoading(false);
+        return;
       }
 
-      // Add a system instruction for concise answers
-      const systemInstruction = `You are a helpful assistant for government schemes. Reply in the user's selected language: ${langCode}. Keep your answers short, concise, and under 200 words. Do not use **, italic or any form of fancy formatting. Do not include any links or references to external sources. Refer to the user as first-person.`;
+      // Present schemes as a simple readable list
+      const schemesContext = schemes.map((s, i) => 
+        `${i + 1}. ${s.title}\n   Description: ${s.description}\n   Eligibility: ${s.eligibility}\n   Amount: ${s.amount}\n   Category: ${s.category}`
+      ).join('\n\n');
 
-      const apiKey = 'AIzaSyBLAhU7Zns-uxrPoY4G9WLkQrX58ZGs3Ck';
-      // Combine all context into a single text block for Gemini
-      let contextBlock = systemInstruction + '\nContext: government_scheme';
-      if (userDataContext) contextBlock += '\n' + userDataContext;
-      contextBlock += '\n' + schemesContext + '\nUser: ' + userMessage.text;
+      // Create a single comprehensive prompt that includes everything
+      const fullPrompt = `You are a helpful assistant for government schemes in India. Based on the user's question, recommend the most suitable government scheme from the list below.
 
+Available Government Schemes:
+${schemesContext}
+
+User Question: ${userMessage.text}
+
+Instructions:
+- Analyze the user's question and match it to the most relevant scheme(s) from the list above
+- Provide the scheme name, description, eligibility criteria, and benefit amount
+- If no scheme matches, say "I don't have information about that specific scheme"
+- Keep response under 200 words
+- No additional formatting or usage of * or **
+- Refer to the user first-person
+- Directlky answer without no preamble
+- Be helpful and specific`;
+
+      // Debug: Log the full prompt
+      // eslint-disable-next-line no-console
+      console.log('Full prompt to Gemini:', fullPrompt);
+
+      const apiKey = 'AIzaSyBo75KPqzXp4lO9tz9yx9SfawkAq1MhUYY';
       const geminiRes = await fetch(
         `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`,
         {
@@ -99,13 +204,18 @@ export default function ChatPage() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             contents: [
-              { parts: [ { text: contextBlock } ] }
+              { parts: [
+                  { text: fullPrompt }
+                ] }
             ]
           }),
         }
       );
 
+      // Debug: Log the raw Gemini response
       const data = await geminiRes.json();
+      // eslint-disable-next-line no-console
+      console.log('Gemini raw response:', data);
       let replyText = data.candidates?.[0]?.content?.parts?.[0]?.text;
       if (!replyText || typeof replyText !== 'string') {
         replyText = 'No response from Gemini.';
