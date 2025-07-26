@@ -5,7 +5,7 @@ import { ArrowLeft, Mic, MicOff, Volume2, VolumeX } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useLanguage } from '../../contexts/language_context';
 /*
-SampleSchemes :- The llmm model will refer to sampleScheme databse for this knowledge base . COnvert the government data to .jason formate 
+SampleSchemes :- The llmm model will refer to sampleScheme databse for its knowledge base . COnvert the government data to .jason formate 
 */
 const sampleSchemes = {
   en: [
