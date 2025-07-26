@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-import sampleSchemes from '../../components/scheme_carousel';
+import sampleSchemes from '../../components/sample_schemes';
 import { ArrowLeft, Send, Bot, User } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useLanguage } from '../../contexts/language_context';
@@ -39,31 +39,9 @@ export default function ChatPage() {
     e.preventDefault();
     if (!inputMessage.trim() || isLoading) return;
 
-    // Detect language code in user message (e.g., "lang: hi" or "language: hi")
-    let detectedLangCode = null;
-    const langMatch = inputMessage.match(/(?:lang(?:uage)?\s*[:=]\s*)([a-z]{2,3})/i);
-    if (langMatch) {
-      detectedLangCode = langMatch[1].toLowerCase();
-    }
 
-    // If user asks for a language but doesn't provide a code, prompt politely
-    if (/language|lang/i.test(inputMessage) && !detectedLangCode) {
-      const politeMsg = "Please specify which language (lang_code) you would like the response in. I need the language code (e.g., en for English, hi for Hindi, te for Telugu etc.) to provide the appropriate response. Once you provide the language code, I will give you information on housing schemes available to you.";
-      setMessages(prev => [
-        ...prev,
-        {
-          id: (Date.now() + 1).toString(),
-          text: politeMsg,
-          sender: 'bot',
-          timestamp: new Date(),
-        },
-      ]);
-      setInputMessage('');
-      return;
-    }
-
-    // Use detected language code if present, else use toggle
-    const langCode = detectedLangCode || t('lang_code');
+    // Always use the current language from the toggle/context
+    const langCode = t('lang_code');
 
     const userMessage: Message = {
       id: Date.now().toString(),
@@ -109,6 +87,11 @@ export default function ChatPage() {
       const systemInstruction = `You are a helpful assistant for government schemes. Reply in the user's selected language: ${langCode}. Keep your answers short, concise, and under 200 words. Do not use **, italic or any form of fancy formatting. Do not include any links or references to external sources. Refer to the user as first-person.`;
 
       const apiKey = 'AIzaSyBLAhU7Zns-uxrPoY4G9WLkQrX58ZGs3Ck';
+      // Combine all context into a single text block for Gemini
+      let contextBlock = systemInstruction + '\nContext: government_scheme';
+      if (userDataContext) contextBlock += '\n' + userDataContext;
+      contextBlock += '\n' + schemesContext + '\nUser: ' + userMessage.text;
+
       const geminiRes = await fetch(
         `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`,
         {
@@ -116,13 +99,7 @@ export default function ChatPage() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             contents: [
-              { parts: [
-                  { text: systemInstruction },
-                  { text: `Context: government_scheme` },
-                  ...(userDataContext ? [{ text: userDataContext }] : []),
-                  { text: schemesContext },
-                  { text: userMessage.text }
-                ] }
+              { parts: [ { text: contextBlock } ] }
             ]
           }),
         }
