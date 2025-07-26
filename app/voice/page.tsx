@@ -4,6 +4,87 @@ import React, { useState, useRef } from 'react';
 import { ArrowLeft, Mic, MicOff, Volume2, VolumeX } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useLanguage } from '../../contexts/language_context';
+/*
+SampleSchemes :- The llmm model will refer to sampleScheme databse for this knowledge base . COnvert the government data to .jason formate 
+*/
+const sampleSchemes = {
+  en: [
+    {
+      id: 1,
+      title: 'PM Kisan Samman Nidhi',
+      description: 'Financial support of ₹6000 per year to small and marginal farmers',
+      eligibility: 'Small & marginal farmers',
+      amount: '₹6,000/year',
+      category: 'Agriculture',
+      color: 'bg-green-500',
+    },
+    {
+      id: 2,
+      title: 'Ayushman Bharat',
+      description: 'Health insurance coverage up to ₹5 lakh per family per year',
+      eligibility: 'Families below poverty line',
+      amount: '₹5,00,000/year',
+      category: 'Healthcare',
+      color: 'bg-blue-500',
+    },
+    {
+      id: 3,
+      title: 'Pradhan Mantri Awas Yojana',
+      description: 'Affordable housing for economically weaker sections',
+      eligibility: 'EWS/LIG families',
+      amount: 'Up to ₹2.5 Lakh subsidy',
+      category: 'Housing',
+      color: 'bg-orange-500',
+    },
+    {
+      id: 4,
+      title: 'Beti Bachao Beti Padhao',
+      description: 'Scheme to address declining child sex ratio and women empowerment',
+      eligibility: 'Girl children',
+      amount: 'Various benefits',
+      category: 'Women & Child',
+      color: 'bg-pink-500',
+    },
+  ],
+  hi: [
+    {
+      id: 1,
+      title: 'पीएम किसान सम्मान निधि',
+      description: 'छोटे और सीमांत किसानों को प्रति वर्ष ₹6000 की वित्तीय सहायता',
+      eligibility: 'छोटे और सीमांत किसान',
+      amount: '₹6,000/वर्ष',
+      category: 'कृषि',
+      color: 'bg-green-500',
+    },
+    {
+      id: 2,
+      title: 'आयुष्मान भारत',
+      description: 'प्रति परिवार प्रति वर्ष ₹5 लाख तक का स्वास्थ्य बीमा कवरेज',
+      eligibility: 'गरीबी रेखा से नीचे के परिवार',
+      amount: '₹5,00,000/वर्ष',
+      category: 'स्वास्थ्य सेवा',
+      color: 'bg-blue-500',
+    },
+    {
+      id: 3,
+      title: 'प्रधान मंत्री आवास योजना',
+      description: 'आर्थिक रूप से कमजोर वर्गों के लिए किफायती आवास',
+      eligibility: 'EWS/LIG परिवार',
+      amount: 'Up to ₹2.5 लाख सब्सिडी',
+      category: 'आवास',
+      color: 'bg-orange-500',
+    },
+    {
+      id: 4,
+      title: 'बेटी बचाओ बेटी पढ़ाओ',
+      description: 'घटते बाल लिंगानुपात और महिला सशक्तिकरण के लिए योजना',
+      eligibility: 'बालिकाएं',
+      amount: 'विभिन्न लाभ',
+      category: 'महिला और बाल',
+      color: 'bg-pink-500',
+    },
+  ],
+};
 
 type VoiceState = 'idle' | 'listening' | 'processing' | 'speaking';
 
@@ -58,34 +139,90 @@ export default function VoicePage() {
     setVoiceState('processing');
     
     try {
-      // TODO: Replace with actual AI API call
-      // const response = await fetch('/api/voice-chat', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({ 
-      //     message: input, 
-      //     language: language,
-      //     context: 'government_schemes' 
-      //   }),
-      // });
-      // const data = await response.json();
+      // Get schemes from the data structure
+      let schemes = [];
       
-      // Sample responses based on input
-      let aiResponse = '';
-      const lowerInput = input.toLowerCase();
+      // Check if sampleSchemes exists and handle different data structures
+      if (!sampleSchemes) {
+        schemes = [];
+      } else if (Array.isArray(sampleSchemes)) {
+        schemes = sampleSchemes;
+      } else if (typeof sampleSchemes === 'object') {
+        // Try to get schemes based on current language first, then fallback
+        const schemeKeys = Object.keys(sampleSchemes);
+        if (sampleSchemes[language]) {
+          schemes = sampleSchemes[language];
+        } else if (sampleSchemes['en']) {
+          schemes = sampleSchemes['en'];
+        } else if (schemeKeys.length > 0) {
+          schemes = sampleSchemes[schemeKeys[0]] || [];
+        }
+      }
       
-      if (lowerInput.includes('farmer') || lowerInput.includes('agriculture') || lowerInput.includes('किसान')) {
-        aiResponse = language === 'hi' 
-          ? 'आपके लिए PM किसान सम्मान निधि योजना उपयुक्त हो सकती है। इस योजना में छोटे किसानों को साल में 6000 रुपये मिलते हैं।'
-          : 'For farmers, the PM Kisan Samman Nidhi scheme might be suitable. It provides 6000 rupees annually to small farmers.';
-      } else if (lowerInput.includes('health') || lowerInput.includes('medical') || lowerInput.includes('स्वास्थ्य')) {
-        aiResponse = language === 'hi'
-          ? 'आयुष्मान भारत योजना के तहत आपको 5 लाख रुपये तक का मुफ्त इलाज मिल सकता है।'
-          : 'Under Ayushman Bharat scheme, you can get free treatment up to 5 lakh rupees.';
-      } else {
-        aiResponse = language === 'hi'
-          ? 'मैं आपकी सरकारी योजनाओं के बारे में मदद कर सकता हूं। कृपया अपनी आवश्यकता बताएं।'
-          : 'I can help you with government schemes. Please tell me your specific requirements.';
+      // Debug: Log the schemes being sent to Gemini
+      // eslint-disable-next-line no-console
+      console.log('Voice schemes sent to Gemini:', schemes);
+      console.log('Voice schemes count:', schemes.length);
+
+      // If no schemes found, provide fallback message
+      if (!schemes || schemes.length === 0) {
+        setResponse('Sorry, I cannot load the government schemes data. Please check the data source.');
+        setVoiceState('idle');
+        return;
+      }
+
+      // Present schemes as a simple readable list
+      const schemesContext = schemes.map((s, i) => 
+        `${i + 1}. ${s.title}\n   Description: ${s.description}\n   Eligibility: ${s.eligibility}\n   Amount: ${s.amount}\n   Category: ${s.category}`
+      ).join('\n\n');
+//This fullprompt is the fusion of user query and database sampleSchemes. which will be directly inputed to the llm model for inferenceing
+      // Create a single comprehensive prompt that includes everything
+      const fullPrompt = `You are a helpful assistant for government schemes in India. Based on the user's question, recommend the most suitable government scheme from the list below.
+
+Available Government Schemes:
+${schemesContext}
+
+User Question: ${input}
+
+Instructions:
+- Analyze the user's question and match it to the most relevant scheme(s) from the list above
+- Provide the scheme name, description, eligibility criteria, and benefit amount
+- If no scheme matches, say "I don't have information about that specific scheme"
+- Keep response under 200 words
+- No additional formatting or usage of * or **
+- Refer to the user first-person
+- Directly answer without preamble
+- Be helpful and specific
+- Reply in ${language === 'hi' ? 'Hindi' : 'English'} language`;
+
+      // Debug: Log the full prompt
+      // eslint-disable-next-line no-console
+      console.log('Voice full prompt to Gemini:', fullPrompt);
+
+      const apiKey = 'AIzaSyCD6730nCLSeKWvYEUPWw9PfQRr_lCIpFs';
+      const geminiRes = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [
+              { parts: [
+                  { text: fullPrompt }
+                ] }
+            ]
+          }),
+        }
+      );
+
+      // Debug: Log the raw Gemini response
+      const data = await geminiRes.json();
+      // eslint-disable-next-line no-console
+      console.log('Voice Gemini raw response:', data);
+      
+      let aiResponse = data.candidates?.[0]?.content?.parts?.[0]?.text;
+      if (!aiResponse || typeof aiResponse !== 'string') {
+        aiResponse = 'Sorry, I could not process your request. Please try again.';
       }
       
       setResponse(aiResponse);
@@ -99,7 +236,13 @@ export default function VoicePage() {
       
     } catch (error) {
       console.error('Voice processing error:', error);
-      setVoiceState('idle');
+      const errorResponse = 'Sorry, there was an error processing your request. Please try again.';
+      setResponse(errorResponse);
+      if (!isMuted) {
+        speakResponse(errorResponse);
+      } else {
+        setVoiceState('idle');
+      }
     }
   };
 

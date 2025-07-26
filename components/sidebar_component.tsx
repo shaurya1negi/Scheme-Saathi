@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { X, History, Users, Settings, Save } from 'lucide-react';
+import { X, History, Users, Settings, Save, Plus } from 'lucide-react';
 import { useLanguage } from '../contexts/language_context';
 import { useSession } from '../contexts/session_context';
 import { useRouter } from 'next/navigation';
@@ -14,7 +14,7 @@ interface SidebarProps {
 
 export default function Sidebar({ isOpen, onClose, onOpenSettings }: SidebarProps) {
   const { t } = useLanguage();
-  const { saveCurrentSession, currentSession } = useSession();
+  const { saveCurrentSession, createNewSession, currentSession, isCurrentSessionModified } = useSession();
   const router = useRouter();
 
   const handleSaveSession = () => {
@@ -24,6 +24,13 @@ export default function Sidebar({ isOpen, onClose, onOpenSettings }: SidebarProp
     alert(t('session_saved'));
   };
 
+  const handleNewSession = () => {
+    createNewSession();
+    onClose();
+    // Show a toast or notification here if needed
+    alert('New session created');
+  };
+
   const handleNavigateToHistory = () => {
     router.push('/history');
     onClose();
@@ -31,10 +38,16 @@ export default function Sidebar({ isOpen, onClose, onOpenSettings }: SidebarProp
 
   const menuItems = [
     {
+      icon: Plus,
+      label: 'New Session',
+      onClick: handleNewSession,
+      disabled: false
+    },
+    {
       icon: Save,
       label: t('save_session'),
       onClick: handleSaveSession,
-      disabled: !currentSession.userDetails && !currentSession.chatHistory?.length && !currentSession.voiceInteractions?.length
+      disabled: !isCurrentSessionModified
     },
     {
       icon: History,

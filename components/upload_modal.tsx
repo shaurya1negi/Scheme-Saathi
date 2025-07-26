@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, User, Calendar, CreditCard, IndianRupee, Briefcase, MapPin } from 'lucide-react';
 import { useLanguage } from '../contexts/language_context';
 import { useSession } from '../contexts/session_context';
@@ -22,7 +22,7 @@ interface FormData {
 
 export default function UploadModal({ isOpen, onClose }: UploadModalProps) {
   const { t } = useLanguage();
-  const { updateUserDetails } = useSession();
+  const { updateUserDetails, currentSession } = useSession();
   const [formData, setFormData] = useState<FormData>({
     fullName: '',
     age: '',
@@ -33,6 +33,32 @@ export default function UploadModal({ isOpen, onClose }: UploadModalProps) {
     district: '',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Pre-populate form with existing user details when modal opens or session changes
+  useEffect(() => {
+    if (isOpen && currentSession.userDetails) {
+      setFormData({
+        fullName: currentSession.userDetails.fullName || '',
+        age: currentSession.userDetails.age || '',
+        aadhaar: currentSession.userDetails.aadhaar || '',
+        income: currentSession.userDetails.income || '',
+        occupation: currentSession.userDetails.occupation || '',
+        state: currentSession.userDetails.state || '',
+        district: currentSession.userDetails.district || '',
+      });
+    } else if (isOpen && !currentSession.userDetails) {
+      // Reset to empty if no user details in session
+      setFormData({
+        fullName: '',
+        age: '',
+        aadhaar: '',
+        income: '',
+        occupation: '',
+        state: '',
+        district: '',
+      });
+    }
+  }, [isOpen, currentSession.userDetails]);
 
   const handleInputChange = (field: keyof FormData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));

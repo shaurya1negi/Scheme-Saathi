@@ -28,6 +28,8 @@ export interface SessionData {
   chatHistory: Message[];
   voiceInteractions: string[];
   totalInteractions: number;
+  isSaved: boolean; // Track if session has been saved
+  lastModified: Date; // Track when session was last modified
 }
 
 interface SessionContextType {
@@ -41,6 +43,8 @@ interface SessionContextType {
   loadSession: (sessionId: string) => void;
   deleteSession: (sessionId: string) => void;
   clearCurrentSession: () => void;
+  createNewSession: () => void; // New function for creating new session
+  isCurrentSessionModified: boolean; // Track if current session has unsaved changes
 }
 
 const SessionContext = createContext<SessionContextType | undefined>(undefined);
@@ -52,9 +56,12 @@ export function SessionProvider({ children }: { children: React.ReactNode }): JS
     voiceInteractions: [],
     totalInteractions: 0,
     sessionType: 'personal',
+    isSaved: false,
+    lastModified: new Date(),
   });
 
   const [savedSessions, setSavedSessions] = useState<SessionData[]>([]);
+  const [isCurrentSessionModified, setIsCurrentSessionModified] = useState(false);
 
   // Load saved sessions from localStorage on mount
   useEffect(() => {
@@ -93,58 +100,83 @@ export function SessionProvider({ children }: { children: React.ReactNode }): JS
     setCurrentSessionState(prev => ({
       ...prev,
       userDetails: details,
-      sessionType: 'personal'
+      sessionType: 'personal',
+      lastModified: new Date(),
     }));
+    setIsCurrentSessionModified(true);
   };
 
   const addChatMessage = (message: Message) => {
     setCurrentSessionState(prev => ({
       ...prev,
       chatHistory: [...(prev.chatHistory || []), message],
-      totalInteractions: (prev.totalInteractions || 0) + 1
+      totalInteractions: (prev.totalInteractions || 0) + 1,
+      lastModified: new Date(),
     }));
+    setIsCurrentSessionModified(true);
   };
 
   const addVoiceInteraction = (interaction: string) => {
     setCurrentSessionState(prev => ({
       ...prev,
       voiceInteractions: [...(prev.voiceInteractions || []), interaction],
-      totalInteractions: (prev.totalInteractions || 0) + 1
+      totalInteractions: (prev.totalInteractions || 0) + 1,
+      lastModified: new Date(),
     }));
+    setIsCurrentSessionModified(true);
   };
 
   const saveCurrentSession = () => {
     const sessionToSave: SessionData = {
       id: currentSession.id || generateSessionId(),
-      timestamp: new Date(),
+      timestamp: currentSession.isSaved ? (currentSession.timestamp || new Date()) : new Date(),
       sessionType: currentSession.sessionType || 'personal',
       userDetails: currentSession.userDetails,
       chatHistory: currentSession.chatHistory || [],
       voiceInteractions: currentSession.voiceInteractions || [],
-      totalInteractions: currentSession.totalInteractions || 0
+      totalInteractions: currentSession.totalInteractions || 0,
+      isSaved: true,
+      lastModified: new Date(),
     };
 
     setSavedSessions(prev => {
-      // Remove existing session with same ID if it exists
-      const filtered = prev.filter(session => session.id !== sessionToSave.id);
-      return [sessionToSave, ...filtered].slice(0, 50); // Keep only last 50 sessions
+      // Check if session already exists and update it
+      const existingIndex = prev.findIndex(session => session.id === sessionToSave.id);
+      if (existingIndex !== -1) {
+        // Update existing session
+        const updated = [...prev];
+        updated[existingIndex] = sessionToSave;
+        return updated;
+      } else {
+        // Add new session
+        return [sessionToSave, ...prev].slice(0, 50); // Keep only last 50 sessions
+      }
     });
 
-    // Clear current session after saving
-    clearCurrentSession();
+    // Mark current session as saved but don't clear it
+    setCurrentSessionState(prev => ({
+      ...prev,
+      isSaved: true,
+      timestamp: sessionToSave.timestamp,
+    }));
+    setIsCurrentSessionModified(false);
   };
 
   const loadSession = (sessionId: string) => {
     const session = savedSessions.find(s => s.id === sessionId);
     if (session) {
       setCurrentSessionState({
-        id: generateSessionId(), // Generate new ID for loaded session
+        id: session.id, // Keep original ID to update the same session
         userDetails: session.userDetails,
         chatHistory: session.chatHistory,
         voiceInteractions: session.voiceInteractions,
         totalInteractions: session.totalInteractions,
-        sessionType: session.sessionType
+        sessionType: session.sessionType,
+        isSaved: true,
+        timestamp: session.timestamp,
+        lastModified: session.lastModified,
       });
+      setIsCurrentSessionModified(false);
     }
   };
 
@@ -158,8 +190,25 @@ export function SessionProvider({ children }: { children: React.ReactNode }): JS
       chatHistory: [],
       voiceInteractions: [],
       totalInteractions: 0,
-      sessionType: 'personal'
+      sessionType: 'personal',
+      isSaved: false,
+      lastModified: new Date(),
     });
+    setIsCurrentSessionModified(false);
+  };
+
+  const createNewSession = () => {
+    // Auto-save current session if it has any meaningful content and isn't saved
+    if ((currentSession.chatHistory?.length && currentSession.chatHistory.length > 1) || 
+        currentSession.voiceInteractions?.length || 
+        currentSession.userDetails) {
+      if (!currentSession.isSaved && isCurrentSessionModified) {
+        saveCurrentSession();
+      }
+    }
+    
+    // Create completely new session
+    clearCurrentSession();
   };
 
   return (
@@ -173,7 +222,9 @@ export function SessionProvider({ children }: { children: React.ReactNode }): JS
       savedSessions,
       loadSession,
       deleteSession,
-      clearCurrentSession
+      clearCurrentSession,
+      createNewSession,
+      isCurrentSessionModified
     }}>
       {children}
     </SessionContext.Provider>

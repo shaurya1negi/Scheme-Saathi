@@ -3,7 +3,7 @@
 import React, { useState, useRef } from 'react';
 import { ArrowLeft, Mic, MicOff, Volume2, VolumeX } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useLanguage } from '../../contexts/LanguageContext';
+import { useLanguage } from '../../contexts/language_context';
 
 type VoiceState = 'idle' | 'listening' | 'processing' | 'speaking';
 

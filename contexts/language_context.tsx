@@ -1,5 +1,6 @@
 'use client';
 
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 // Language interface
@@ -53,6 +54,21 @@ const translations = {
     'start_recording': 'Start Recording',
     'stop_recording': 'Stop Recording',
     
+    // Session History
+    'save_session': 'Save Session',
+    'session_saved': 'Session Saved Successfully',
+    'no_sessions': 'No Sessions Saved Yet',
+    'personal_session': 'Personal Session',
+    'proxy_session': 'Proxy Session',
+    'session_details': 'Session Details',
+    'load_session': 'Load Session',
+    'delete_session': 'Delete Session',
+    'session_summary': 'Session Summary',
+    'total_interactions': 'Total Interactions',
+    'chat_history': 'Chat History',
+    'voice_history': 'Voice History',
+    'session_type': 'Session Type',
+    
     // Goodbye page
     'goodbye_title': 'Thank you for using Scheme Sathi!',
     'goodbye_message': 'We hope you found the government schemes helpful.',
@@ -104,6 +120,21 @@ const translations = {
     'processing': 'प्रोसेसिंग...',
     'start_recording': 'रिकॉर्डिंग शुरू करें',
     'stop_recording': 'रिकॉर्डिंग बंद करें',
+    
+    // Session History
+    'save_session': 'सत्र सेव करें',
+    'session_saved': 'सत्र सफलतापूर्वक सेव हो गया',
+    'no_sessions': 'अभी तक कोई सत्र सेव नहीं किया गया',
+    'personal_session': 'व्यक्तिगत सत्र',
+    'proxy_session': 'प्रॉक्सी सत्र',
+    'session_details': 'सत्र विवरण',
+    'load_session': 'सत्र लोड करें',
+    'delete_session': 'सत्र डिलीट करें',
+    'session_summary': 'सत्र सारांश',
+    'total_interactions': 'कुल इंटरैक्शन',
+    'chat_history': 'चैट इतिहास',
+    'voice_history': 'वॉयस इतिहास',
+    'session_type': 'सत्र प्रकार',
     
     // Goodbye page
     'goodbye_title': 'स्कीम साथी का उपयोग करने के लिए धन्यवाद!',
