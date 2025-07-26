@@ -1,0 +1,99 @@
+'use client';
+
+import React from 'react';
+import { X, History, Users, Settings } from 'lucide-react';
+import { useLanguage } from '../contexts/language_context';
+
+interface SidebarProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onOpenSettings: () => void;
+}
+
+export default function Sidebar({ isOpen, onClose, onOpenSettings }: SidebarProps) {
+  const { t } = useLanguage();
+
+  const menuItems = [
+    {
+      icon: History,
+      label: t('history'),
+      onClick: () => {
+        // TODO: Navigate to history page
+        console.log('Navigate to History');
+        onClose();
+      },
+    },
+    {
+      icon: Users,
+      label: t('family_mode'),
+      onClick: () => {
+        // TODO: Navigate to family mode
+        console.log('Navigate to Family Mode');
+        onClose();
+      },
+    },
+    {
+      icon: Settings,
+      label: t('settings'),
+      onClick: () => {
+        onOpenSettings();
+      },
+    },
+  ];
+
+  if (!isOpen) return null;
+
+  return (
+    <>
+      {/* Backdrop */}
+      <div
+        className="fixed inset-0 bg-black bg-opacity-50 z-40 animate-fade-in"
+        onClick={onClose}
+      />
+      
+      {/* Sidebar */}
+      <div className="fixed left-0 top-0 h-full w-80 bg-white dark:bg-gray-800 shadow-xl z-50 transform transition-transform duration-300 ease-in-out">
+        {/* Header */}
+        <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
+          <h2 className="text-xl font-semibold text-gray-800 dark:text-white">{t('scheme_sathi')}</h2>
+          <button
+            onClick={onClose}
+            className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+            aria-label="Close sidebar"
+          >
+            <X size={20} className="text-gray-600 dark:text-gray-400" />
+          </button>
+        </div>
+
+        {/* Menu Items */}
+        <nav className="p-4">
+          <ul className="space-y-2">
+            {menuItems.map((item, index) => (
+              <li key={index}>
+                <button
+                  onClick={item.onClick}
+                  className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-left group"
+                >
+                  <item.icon 
+                    size={20} 
+                    className="text-gray-600 dark:text-gray-400 group-hover:text-primary-600 dark:group-hover:text-primary-400" 
+                  />
+                  <span className="text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white font-medium">
+                    {item.label}
+                  </span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        </nav>
+
+        {/* Footer */}
+        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200 dark:border-gray-700">
+          <p className="text-sm text-gray-500 dark:text-gray-400 text-center">
+            Made for citizens of India 🇮🇳
+          </p>
+        </div>
+      </div>
+    </>
+  );
+}
