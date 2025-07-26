@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-import sampleSchemes from '../../components/scheme_carousel';
 import { ArrowLeft, Send, Bot, User } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useLanguage } from '../../contexts/language_context';
@@ -28,7 +27,13 @@ export default function ChatPage() {
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-
+  // Sample responses - in production, this would be an AI API call
+  const sampleResponses = [
+    "Based on your query, I found several relevant schemes. PM Kisan Samman Nidhi might be suitable if you're a farmer.",
+    "For healthcare support, you might be eligible for Ayushman Bharat scheme. Would you like more details?",
+    "I can help you with education schemes, agricultural support, or healthcare benefits. What's your specific requirement?",
+    "Let me search for schemes matching your criteria. Can you tell me more about your occupation and income range?",
+  ];
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
@@ -38,32 +43,6 @@ export default function ChatPage() {
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!inputMessage.trim() || isLoading) return;
-
-    // Detect language code in user message (e.g., "lang: hi" or "language: hi")
-    let detectedLangCode = null;
-    const langMatch = inputMessage.match(/(?:lang(?:uage)?\s*[:=]\s*)([a-z]{2,3})/i);
-    if (langMatch) {
-      detectedLangCode = langMatch[1].toLowerCase();
-    }
-
-    // If user asks for a language but doesn't provide a code, prompt politely
-    if (/language|lang/i.test(inputMessage) && !detectedLangCode) {
-      const politeMsg = "Please specify which language (lang_code) you would like the response in. I need the language code (e.g., en for English, hi for Hindi, te for Telugu etc.) to provide the appropriate response. Once you provide the language code, I will give you information on housing schemes available to you.";
-      setMessages(prev => [
-        ...prev,
-        {
-          id: (Date.now() + 1).toString(),
-          text: politeMsg,
-          sender: 'bot',
-          timestamp: new Date(),
-        },
-      ]);
-      setInputMessage('');
-      return;
-    }
-
-    // Use detected language code if present, else use toggle
-    const langCode = detectedLangCode || t('lang_code');
 
     const userMessage: Message = {
       id: Date.now().toString(),
@@ -76,84 +55,47 @@ export default function ChatPage() {
     setInputMessage('');
     setIsLoading(true);
 
-
-    try {
-      // Get the current language's schemes
-      const schemes = sampleSchemes[langCode] || [];
-
-      // Create a concise, plain text context string for the model
-      const schemesContext = schemes.map(s =>
-        `${s.title}\n${s.description}\nEligibility: ${s.eligibility}\nAmount: ${s.amount}\nCategory: ${s.category}`
-      ).join('\n\n');
-
-      // Read user data from localStorage
-      let userDataContext = '';
-      try {
-        const userDataRaw = localStorage.getItem('scheme-sathi-user-data');
-        if (userDataRaw) {
-          const userData = JSON.parse(userDataRaw);
-          userDataContext = [
-            `User Full Name: ${userData.fullName || ''}`,
-            `User Age: ${userData.age || ''}`,
-            `User Income: ${userData.income || ''}`,
-            `User Occupation: ${userData.occupation || ''}`,
-            //`User State: ${userData.state || ''}`,
-            //`User District: ${userData.district || ''}`
-          ].join('\n');
-        }
-      } catch (e) {
-        // parse errors are ignored - like eyerything else in
-      }
-
-      // Add a system instruction for concise answers
-      const systemInstruction = `You are a helpful assistant for government schemes. Reply in the user's selected language: ${langCode}. Keep your answers short, concise, and under 200 words. Do not use **, italic or any form of fancy formatting. Do not include any links or references to external sources. Refer to the user as first-person.`;
-
-      const apiKey = 'AIzaSyBLAhU7Zns-uxrPoY4G9WLkQrX58ZGs3Ck';
-      const geminiRes = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contents: [
-              { parts: [
-                  { text: systemInstruction },
-                  { text: `Context: government_scheme` },
-                  ...(userDataContext ? [{ text: userDataContext }] : []),
-                  { text: schemesContext },
-                  { text: userMessage.text }
-                ] }
-            ]
-          }),
-        }
-      );
-
-      const data = await geminiRes.json();
-      let replyText = data.candidates?.[0]?.content?.parts?.[0]?.text;
-      if (!replyText || typeof replyText !== 'string') {
-        replyText = 'No response from Gemini.';
-      }
+    // Simulate API call delay
+    setTimeout(() => {
       const botResponse: Message = {
         id: (Date.now() + 1).toString(),
-        text: replyText,
+        text: sampleResponses[Math.floor(Math.random() * sampleResponses.length)],
         sender: 'bot',
         timestamp: new Date(),
       };
 
       setMessages(prev => [...prev, botResponse]);
+      setIsLoading(false);
+    }, 1500);
+
+    // TODO: Replace with actual AI API call
+    /*
+    try {
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          message: inputMessage, 
+          language: language,
+          context: 'government_schemes' 
+        }),
+      });
+      
+      const data = await response.json();
+      const botResponse: Message = {
+        id: (Date.now() + 1).toString(),
+        text: data.response,
+        sender: 'bot',
+        timestamp: new Date(),
+      };
+      
+      setMessages(prev => [...prev, botResponse]);
     } catch (error) {
-      setMessages(prev => [
-        ...prev,
-        {
-          id: (Date.now() + 2).toString(),
-          text: 'Sorry, there was an error connecting to Gemini.',
-          sender: 'bot',
-          timestamp: new Date(),
-        },
-      ]);
+      console.error('Chat API error:', error);
     } finally {
       setIsLoading(false);
     }
+    */
   };
 
   const formatTime = (date: Date) => {
