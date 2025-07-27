@@ -1,25 +1,56 @@
 'use client';
 
-import React, { useState } from 'react';
-import { Menu, X, Upload, MessageCircle, Mic } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Menu, X, Upload, MessageCircle, Mic, User, LogIn } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useLanguage } from '../contexts/language_context';
+import { useAuth } from '../contexts/auth_context';
+import { useUserInteractions } from '../hooks/useSupabase';
+import { useInteractionTracking } from '../hooks/useInteractionTracking';
 import Sidebar from '../components/sidebar_component';
 import LanguageToggle from '../components/language_toggle';
 import SchemeCarousel from '../components/scheme_carousel';
 import UploadModal from '../components/upload_modal';
 import SettingsModal from '../components/settings_modal';
+import AuthModal from '../components/auth_modal';
+import UserProfile from '../components/user_profile';
+import SchemeRecommendations from '../components/scheme_recommendations';
+import SupabaseSetupBanner from '../components/supabase_setup_banner';
 
 export default function HomePage() {
   const router = useRouter();
   const { t } = useLanguage();
+  const { user, loading } = useAuth();
+  const { logInteraction } = useUserInteractions();
+  const { trackPageView, trackDocumentUpload } = useInteractionTracking();
+  
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [isRecommendationsOpen, setIsRecommendationsOpen] = useState(false);
+  const [authMode, setAuthMode] = useState<'signin' | 'signup'>('signin');
+
+  // Log page view when component mounts
+  useEffect(() => {
+    logInteraction('page_view', { page: 'home' });
+    trackPageView(); // Track for analytics
+  }, [logInteraction, trackPageView]);
 
   const handleOpenSettings = () => {
     setIsSettingsOpen(true);
     setIsSidebarOpen(false);
+  };
+
+  // Handle authentication-related actions
+  const handleAuthAction = (mode: 'signin' | 'signup') => {
+    setAuthMode(mode);
+    setIsAuthModalOpen(true);
+  };
+
+  const handleProfileOpen = () => {
+    setIsProfileOpen(true);
   };
 
   // Main action buttons configuration
@@ -29,21 +60,34 @@ export default function HomePage() {
       label: t('upload_info'),
       description: 'Add your personal details to get personalized scheme recommendations',
       color: 'bg-blue-500 hover:bg-blue-600',
-      onClick: () => setIsUploadModalOpen(true),
+      onClick: () => {
+        if (user) {
+          setIsUploadModalOpen(true);
+          logInteraction('document_upload', { action: 'modal_open' });
+        } else {
+          handleAuthAction('signin');
+        }
+      },
     },
     {
       icon: MessageCircle,
       label: t('text_chatbot'),
       description: 'Chat with our AI assistant about government schemes',
       color: 'bg-green-500 hover:bg-green-600',
-      onClick: () => router.push('/chat'),
+      onClick: () => {
+        logInteraction('chat_message', { action: 'navigate_to_chat' });
+        router.push('/chat');
+      },
     },
     {
       icon: Mic,
       label: t('voice_assistant'),
       description: 'Speak with our voice assistant for hands-free help',
       color: 'bg-purple-500 hover:bg-purple-600',
-      onClick: () => router.push('/voice'),
+      onClick: () => {
+        logInteraction('voice_query', { action: 'navigate_to_voice' });
+        router.push('/voice');
+      },
     },
   ];
 
@@ -53,6 +97,9 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 to-white dark:from-gray-900 dark:to-gray-800">
+      {/* Supabase Setup Banner */}
+      <SupabaseSetupBanner />
+      
       {/* Header */}
       <header className="relative bg-white dark:bg-gray-800 shadow-sm border-b border-gray-100 dark:border-gray-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -75,9 +122,44 @@ export default function HomePage() {
               </h1>
             </div>
 
-            {/* Right - Language Toggle and Close Button */}
+            {/* Right - Language Toggle, User Actions, and Close Button */}
             <div className="flex items-center gap-3">
               <LanguageToggle />
+              
+              {/* User Authentication/Profile Section */}
+              {loading ? (
+                <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 animate-pulse"></div>
+              ) : user ? (
+                <button
+                  onClick={handleProfileOpen}
+                  className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                  aria-label="User profile"
+                >
+                  <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center">
+                    <User size={16} className="text-blue-600 dark:text-blue-400" />
+                  </div>
+                  <span className="hidden sm:block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    {user.user_metadata?.full_name || user.email?.split('@')[0] || 'User'}
+                  </span>
+                </button>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => handleAuthAction('signin')}
+                    className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                  >
+                    <LogIn size={16} />
+                    <span className="hidden sm:block">Sign In</span>
+                  </button>
+                  <button
+                    onClick={() => handleAuthAction('signup')}
+                    className="px-3 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors"
+                  >
+                    Sign Up
+                  </button>
+                </div>
+              )}
+              
               <button
                 onClick={handleCloseApp}
                 className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
@@ -130,6 +212,19 @@ export default function HomePage() {
 
         {/* Schemes Carousel Section */}
         <section className="mb-8">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+              Popular Government Schemes
+            </h2>
+            {user && (
+              <button
+                onClick={() => setIsRecommendationsOpen(true)}
+                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg transition-colors"
+              >
+                Get My Recommendations
+              </button>
+            )}
+          </div>
           <SchemeCarousel />
         </section>
 
@@ -181,6 +276,19 @@ export default function HomePage() {
       <SettingsModal 
         isOpen={isSettingsOpen} 
         onClose={() => setIsSettingsOpen(false)} 
+      />
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+        initialMode={authMode}
+      />
+      <UserProfile
+        isOpen={isProfileOpen}
+        onClose={() => setIsProfileOpen(false)}
+      />
+      <SchemeRecommendations
+        isOpen={isRecommendationsOpen}
+        onClose={() => setIsRecommendationsOpen(false)}
       />
     </div>
   );

@@ -1,8 +1,9 @@
 'use client';
 
 import React from 'react';
-import { X, History, Users, Settings } from 'lucide-react';
+import { X, History, Users, Settings, BarChart3, Activity, Bell, FileText } from 'lucide-react';
 import { useLanguage } from '../contexts/language_context';
+import { useRouter } from 'next/navigation';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -12,8 +13,41 @@ interface SidebarProps {
 
 export default function Sidebar({ isOpen, onClose, onOpenSettings }: SidebarProps) {
   const { t } = useLanguage();
+  const router = useRouter();
 
   const menuItems = [
+    {
+      icon: BarChart3,
+      label: 'Analytics Dashboard',
+      onClick: () => {
+        router.push('/analytics');
+        onClose();
+      },
+    },
+    {
+      icon: Activity,
+      label: 'Application Tracker',
+      onClick: () => {
+        router.push('/applications');
+        onClose();
+      },
+    },
+    {
+      icon: Bell,
+      label: 'Notifications',
+      onClick: () => {
+        router.push('/notifications');
+        onClose();
+      },
+    },
+    {
+      icon: FileText,
+      label: 'Document OCR',
+      onClick: () => {
+        router.push('/ocr');
+        onClose();
+      },
+    },
     {
       icon: History,
       label: t('history'),

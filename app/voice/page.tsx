@@ -5,6 +5,14 @@ import { ArrowLeft, Mic, MicOff, Volume2, VolumeX } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useLanguage } from '../../contexts/language_context';
 
+// Type declarations for Speech APIs
+declare global {
+  interface Window {
+    SpeechRecognition: any;
+    webkitSpeechRecognition: any;
+  }
+}
+
 type VoiceState = 'idle' | 'listening' | 'processing' | 'speaking';
 
 export default function VoicePage() {
@@ -14,12 +22,12 @@ export default function VoicePage() {
   const [transcript, setTranscript] = useState('');
   const [response, setResponse] = useState('');
   const [isMuted, setIsMuted] = useState(false);
-  const recognitionRef = useRef<SpeechRecognition | null>(null);
+  const recognitionRef = useRef<any>(null);
   const synthRef = useRef<SpeechSynthesisUtterance | null>(null);
 
   // Initialize speech recognition
   const initializeSpeechRecognition = () => {
-    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+    if (typeof window !== 'undefined' && ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
       const recognition = new SpeechRecognition();
       
@@ -105,7 +113,7 @@ export default function VoicePage() {
 
   // Text-to-speech function
   const speakResponse = (text: string) => {
-    if ('speechSynthesis' in window) {
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
       setVoiceState('speaking');
       
       const utterance = new SpeechSynthesisUtterance(text);
@@ -122,7 +130,7 @@ export default function VoicePage() {
       };
       
       synthRef.current = utterance;
-      speechSynthesis.speak(utterance);
+      window.speechSynthesis.speak(utterance);
     } else {
       setVoiceState('idle');
     }
@@ -139,7 +147,9 @@ export default function VoicePage() {
       }
       recognitionRef.current?.start();
     } else if (voiceState === 'speaking') {
-      speechSynthesis.cancel();
+      if (typeof window !== 'undefined') {
+        window.speechSynthesis.cancel();
+      }
       setVoiceState('idle');
     }
   };
@@ -148,7 +158,9 @@ export default function VoicePage() {
   const toggleMute = () => {
     setIsMuted(!isMuted);
     if (voiceState === 'speaking') {
-      speechSynthesis.cancel();
+      if (typeof window !== 'undefined') {
+        window.speechSynthesis.cancel();
+      }
       setVoiceState('idle');
     }
   };
