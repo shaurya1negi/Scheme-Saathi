@@ -7,14 +7,6 @@ import { useLanguage } from '../../contexts/language_context';
 
 type VoiceState = 'idle' | 'listening' | 'processing' | 'speaking';
 
-// TypeScript declarations for Speech API
-declare global {
-  interface Window {
-    SpeechRecognition: any;
-    webkitSpeechRecognition: any;
-  }
-}
-
 export default function VoicePage() {
   const router = useRouter();
   const { t, language } = useLanguage();
@@ -22,7 +14,7 @@ export default function VoicePage() {
   const [transcript, setTranscript] = useState('');
   const [response, setResponse] = useState('');
   const [isMuted, setIsMuted] = useState(false);
-  const recognitionRef = useRef<any>(null);
+  const recognitionRef = useRef<SpeechRecognition | null>(null);
   const synthRef = useRef<SpeechSynthesisUtterance | null>(null);
 
   // Initialize speech recognition

@@ -1,8 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, User, Calendar, CreditCard, IndianRupee, Briefcase, MapPin } from 'lucide-react';
 import { useLanguage } from '../contexts/language_context';
+import { useSession } from '../contexts/session_context';
 
 interface UploadModalProps {
   isOpen: boolean;
@@ -21,6 +22,7 @@ interface FormData {
 
 export default function UploadModal({ isOpen, onClose }: UploadModalProps) {
   const { t } = useLanguage();
+  const { updateUserDetails, currentSession } = useSession();
   const [formData, setFormData] = useState<FormData>({
     fullName: '',
     age: '',
@@ -32,6 +34,32 @@ export default function UploadModal({ isOpen, onClose }: UploadModalProps) {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Pre-populate form with existing user details when modal opens or session changes
+  useEffect(() => {
+    if (isOpen && currentSession.userDetails) {
+      setFormData({
+        fullName: currentSession.userDetails.fullName || '',
+        age: currentSession.userDetails.age || '',
+        aadhaar: currentSession.userDetails.aadhaar || '',
+        income: currentSession.userDetails.income || '',
+        occupation: currentSession.userDetails.occupation || '',
+        state: currentSession.userDetails.state || '',
+        district: currentSession.userDetails.district || '',
+      });
+    } else if (isOpen && !currentSession.userDetails) {
+      // Reset to empty if no user details in session
+      setFormData({
+        fullName: '',
+        age: '',
+        aadhaar: '',
+        income: '',
+        occupation: '',
+        state: '',
+        district: '',
+      });
+    }
+  }, [isOpen, currentSession.userDetails]);
+
   const handleInputChange = (field: keyof FormData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
@@ -41,13 +69,16 @@ export default function UploadModal({ isOpen, onClose }: UploadModalProps) {
     setIsSubmitting(true);
     
     try {
+      // Update session context with user details
+      updateUserDetails(formData);
+      
       // TODO: API call to save user information
       console.log('Submitting user data:', formData);
       
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 2000));
       
-      // TODO: Store in localStorage or send to backend
+      // Store in localStorage as backup
       localStorage.setItem('scheme-sathi-user-data', JSON.stringify(formData));
       
       alert('Information saved successfully!');

@@ -1,8 +1,9 @@
 'use client';
 
 import React from 'react';
-import { X, History, Users, Settings, BarChart3, Activity, Bell, FileText } from 'lucide-react';
+import { X, History, Users, Settings, Save, Plus } from 'lucide-react';
 import { useLanguage } from '../contexts/language_context';
+import { useSession } from '../contexts/session_context';
 import { useRouter } from 'next/navigation';
 
 interface SidebarProps {
@@ -13,49 +14,45 @@ interface SidebarProps {
 
 export default function Sidebar({ isOpen, onClose, onOpenSettings }: SidebarProps) {
   const { t } = useLanguage();
+  const { saveCurrentSession, createNewSession, currentSession, isCurrentSessionModified } = useSession();
   const router = useRouter();
+
+  const handleSaveSession = () => {
+    saveCurrentSession();
+    onClose();
+    // Show a toast or notification here if needed
+    alert(t('session_saved'));
+  };
+
+  const handleNewSession = () => {
+    createNewSession();
+    onClose();
+    // Show a toast or notification here if needed
+    alert('New session created');
+  };
+
+  const handleNavigateToHistory = () => {
+    router.push('/history');
+    onClose();
+  };
 
   const menuItems = [
     {
-      icon: BarChart3,
-      label: 'Analytics Dashboard',
-      onClick: () => {
-        router.push('/analytics');
-        onClose();
-      },
+      icon: Plus,
+      label: 'New Session',
+      onClick: handleNewSession,
+      disabled: false
     },
     {
-      icon: Activity,
-      label: 'Application Tracker',
-      onClick: () => {
-        router.push('/applications');
-        onClose();
-      },
-    },
-    {
-      icon: Bell,
-      label: 'Notifications',
-      onClick: () => {
-        router.push('/notifications');
-        onClose();
-      },
-    },
-    {
-      icon: FileText,
-      label: 'Document OCR',
-      onClick: () => {
-        router.push('/ocr');
-        onClose();
-      },
+      icon: Save,
+      label: t('save_session'),
+      onClick: handleSaveSession,
+      disabled: !isCurrentSessionModified
     },
     {
       icon: History,
       label: t('history'),
-      onClick: () => {
-        // TODO: Navigate to history page
-        console.log('Navigate to History');
-        onClose();
-      },
+      onClick: handleNavigateToHistory,
     },
     {
       icon: Users,
@@ -106,13 +103,26 @@ export default function Sidebar({ isOpen, onClose, onOpenSettings }: SidebarProp
               <li key={index}>
                 <button
                   onClick={item.onClick}
-                  className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-left group"
+                  disabled={item.disabled}
+                  className={`w-full flex items-center gap-3 p-3 rounded-lg transition-colors text-left group ${
+                    item.disabled 
+                      ? 'opacity-50 cursor-not-allowed' 
+                      : 'hover:bg-gray-100 dark:hover:bg-gray-700'
+                  }`}
                 >
                   <item.icon 
                     size={20} 
-                    className="text-gray-600 dark:text-gray-400 group-hover:text-primary-600 dark:group-hover:text-primary-400" 
+                    className={`${
+                      item.disabled 
+                        ? 'text-gray-400' 
+                        : 'text-gray-600 dark:text-gray-400 group-hover:text-primary-600 dark:group-hover:text-primary-400'
+                    }`}
                   />
-                  <span className="text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white font-medium">
+                  <span className={`font-medium ${
+                    item.disabled 
+                      ? 'text-gray-400' 
+                      : 'text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white'
+                  }`}>
                     {item.label}
                   </span>
                 </button>
