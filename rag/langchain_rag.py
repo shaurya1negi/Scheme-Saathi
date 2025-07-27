@@ -35,7 +35,7 @@ class SchemeRAGSystem:
                  google_api_key: Optional[str] = None,
                  chroma_persist_dir: str = "data/chroma_db",
                  embedding_model: str = "models/embedding-001",
-                 llm_model: str = "gemini-2.0-flash-exp"):
+                 llm_model: str = "gemini-1.5-pro"):
         
         self.google_api_key = google_api_key or os.getenv("GOOGLE_API_KEY")
         self.chroma_persist_dir = Path(chroma_persist_dir)
@@ -44,6 +44,9 @@ class SchemeRAGSystem:
         # Initialize LangChain components with Gemini
         if self.google_api_key:
             try:
+                # Set the API key in environment for LangChain
+                os.environ["GOOGLE_API_KEY"] = self.google_api_key
+                
                 self.embeddings = GoogleGenerativeAIEmbeddings(
                     google_api_key=self.google_api_key,
                     model=embedding_model
@@ -56,7 +59,7 @@ class SchemeRAGSystem:
                     convert_system_message_to_human=True
                 )
                 self.gemini_enabled = True
-                console.print("[green]✅ Gemini 2.0 Flash Experimental initialized successfully[/green]")
+                console.print("[green]✅ Gemini 1.5 Pro initialized successfully[/green]")
             except Exception as e:
                 console.print(f"[red]❌ Failed to initialize Gemini: {e}[/red]")
                 self.embeddings = None
@@ -72,7 +75,7 @@ class SchemeRAGSystem:
         self.vector_store = None
         self.qa_chain = None
         
-        logger.info(f"Initialized SchemeRAGSystem with LangChain and Gemini 2.0 Flash Experimental")
+        logger.info(f"Initialized SchemeRAGSystem with LangChain and Gemini 1.5 Pro")
         
     def create_documents_from_schemes(self, schemes_data: List[Dict[str, Any]]) -> List[Document]:
         """Convert scheme data to LangChain Documents"""
@@ -396,7 +399,7 @@ class SchemeRAGSystem:
             "qa_chain_ready": self.qa_chain is not None,
             "chroma_persist_dir": str(self.chroma_persist_dir),
             "embedding_model": "models/embedding-001",
-            "llm_model": "gemini-2.0-flash-exp"
+            "llm_model": "gemini-1.5-pro"
         }
         
         if self.vector_store:

@@ -2,22 +2,141 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Indian Pattern Backgrounds */
 @layer base {
   html {
     scroll-behavior: smooth;
   }
   
   body {
-    @apply bg-gray-50 text-gray-900;
+    @apply bg-gradient-to-br from-orange-50 via-white to-green-50 text-gray-900;
+    font-family: 'Inter', 'Devanagari', sans-serif;
+  }
+
+  /* Indian Mandala Pattern Background */
+  .mandala-bg {
+    background-image: 
+      radial-gradient(circle at 25% 25%, rgba(255, 153, 51, 0.1) 2px, transparent 2px),
+      radial-gradient(circle at 75% 75%, rgba(19, 136, 8, 0.1) 2px, transparent 2px),
+      radial-gradient(circle at 50% 50%, rgba(255, 122, 34, 0.05) 1px, transparent 1px);
+    background-size: 60px 60px, 60px 60px, 30px 30px;
+  }
+
+  /* Indian Geometric Pattern */
+  .geometric-bg {
+    background-image: 
+      linear-gradient(45deg, rgba(255, 153, 51, 0.1) 25%, transparent 25%),
+      linear-gradient(-45deg, rgba(19, 136, 8, 0.1) 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, rgba(255, 153, 51, 0.1) 75%),
+      linear-gradient(-45deg, transparent 75%, rgba(19, 136, 8, 0.1) 75%);
+    background-size: 20px 20px;
+    background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+  }
+
+  /* Custom Scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    @apply bg-orange-50;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    @apply bg-gradient-to-b from-orange-400 to-green-500 rounded-full;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    @apply from-orange-500 to-green-600;
   }
 }
 
 @layer components {
-  .btn-primary {
-    @apply px-6 py-3 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors;
+  /* Indian Flag Gradient Button */
+  .btn-indian {
+    @apply px-8 py-4 bg-gradient-to-r from-orange-500 via-white to-green-500 text-gray-800 font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 border-2 border-orange-200;
+    background-size: 200% 100%;
+    animation: gradientShift 3s ease infinite;
   }
-  
-  .card {
-    @apply bg-white rounded-lg shadow-sm border border-gray-200 p-6;
+
+  /* Primary Indian Button */
+  .btn-primary-indian {
+    @apply px-6 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-105 hover:from-orange-600 hover:to-orange-700;
+  }
+
+  /* Secondary Indian Button */
+  .btn-secondary-indian {
+    @apply px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-105 hover:from-green-600 hover:to-green-700;
+  }
+
+  /* Indian Card Design */
+  .card-indian {
+    @apply bg-white rounded-2xl shadow-lg border-l-4 border-orange-400 p-6 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1;
+    background: linear-gradient(135deg, #fff 0%, #fef7ed 100%);
+  }
+
+  /* Golden Card Variant */
+  .card-golden {
+    @apply bg-gradient-to-br from-yellow-50 to-orange-50 rounded-2xl shadow-lg border border-yellow-200 p-6 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1;
+    box-shadow: 0 4px 20px rgba(255, 153, 51, 0.2);
+  }
+
+  /* Tricolor Divider */
+  .divider-tricolor {
+    height: 4px;
+    background: linear-gradient(to right, #ff6600 33%, #ffffff 33% 66%, #138808 66%);
+    border-radius: 2px;
+  }
+
+  /* Lotus Pattern */
+  .lotus-pattern {
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ff9933' fill-opacity='0.1'%3E%3Cpath d='M30 30c0-16.569 13.431-30 30-30v30H30zM0 30c0-16.569 13.431-30 30-30v30H0z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+
+  /* Text Gradient Indian */
+  .text-gradient-indian {
+    @apply bg-gradient-to-r from-orange-600 via-yellow-500 to-green-600 bg-clip-text text-transparent font-bold;
+  }
+
+  /* Text Gradient Tricolor */
+  .text-gradient-tricolor {
+    @apply bg-gradient-to-r from-orange-500 via-gray-700 to-green-500 bg-clip-text text-transparent font-bold;
+  }
+
+  /* Glow Effect */
+  .glow-orange {
+    box-shadow: 0 0 20px rgba(255, 153, 51, 0.4);
+  }
+
+  .glow-green {
+    box-shadow: 0 0 20px rgba(19, 136, 8, 0.4);
+  }
+
+  /* Cultural Pattern Border */
+  .border-cultural {
+    border-image: linear-gradient(45deg, #ff6600, #ffffff, #138808, #ff6600) 1;
+  }
+}
+
+/* Custom Animations */
+@keyframes gradientShift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes pulse-indian {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 153, 51, 0.4); }
+  50% { box-shadow: 0 0 0 10px rgba(255, 153, 51, 0); }
+}
+
+/* Responsive Typography */
+@media (max-width: 640px) {
+  .text-responsive {
+    font-size: clamp(1.5rem, 4vw, 2rem);
   }
 }

@@ -22,27 +22,27 @@ export default function HomePage() {
     setIsSidebarOpen(false);
   };
 
-  // Main action buttons configuration
+  // Main action buttons configuration with Indian colors
   const mainActions = [
     {
       icon: Upload,
       label: t('upload_info'),
       description: 'Add your personal details to get personalized scheme recommendations',
-      color: 'bg-blue-500 hover:bg-blue-600',
+      color: 'bg-gradient-to-br from-saffron-500 to-marigold-600 hover:from-saffron-600 hover:to-marigold-700',
       onClick: () => setIsUploadModalOpen(true),
     },
     {
       icon: MessageCircle,
       label: t('text_chatbot'),
       description: 'Chat with our AI assistant about government schemes',
-      color: 'bg-green-500 hover:bg-green-600',
+      color: 'bg-gradient-to-br from-indianGreen-500 to-indianGreen-700 hover:from-indianGreen-600 hover:to-indianGreen-800',
       onClick: () => router.push('/chat'),
     },
     {
       icon: Mic,
       label: t('voice_assistant'),
       description: 'Speak with our voice assistant for hands-free help',
-      color: 'bg-purple-500 hover:bg-purple-600',
+      color: 'bg-gradient-to-br from-peacock-500 to-ashoka-600 hover:from-peacock-600 hover:to-ashoka-700',
       onClick: () => router.push('/voice'),
     },
   ];
@@ -52,38 +52,44 @@ export default function HomePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 to-white dark:from-gray-900 dark:to-gray-800">
+    <div className="min-h-screen bg-gradient-to-br from-saffron-50 via-white to-indianGreen-50 mandala-bg">
+      {/* Decorative Header Pattern */}
+      <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-saffron-500 via-white to-indianGreen-500"></div>
+      
       {/* Header */}
-      <header className="relative bg-white dark:bg-gray-800 shadow-sm border-b border-gray-100 dark:border-gray-700">
+      <header className="relative bg-white/80 backdrop-blur-md shadow-cultural border-b border-gradient-to-r from-saffron-200 to-indianGreen-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
+          <div className="flex items-center justify-between h-20">
             {/* Left - Hamburger Menu */}
             <button
               onClick={() => setIsSidebarOpen(true)}
-              className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              className="p-3 rounded-xl hover:bg-gradient-to-r hover:from-saffron-100 hover:to-indianGreen-100 transition-all duration-300 transform hover:scale-110 group"
               aria-label="Open menu"
             >
-              <Menu size={24} className="text-gray-700 dark:text-gray-300" />
+              <Menu size={26} className="text-saffron-600 group-hover:text-saffron-700 transition-colors" />
             </button>
 
-            {/* Center - App Title */}
-            <div className="flex-1 flex justify-center">
-              <h1 className="text-2xl md:text-3xl font-bold text-center">
-                <span className="bg-gradient-to-r from-saffron-500 via-gray-600 to-indianGreen-500 bg-clip-text text-transparent">
-                  {t('scheme_sathi')}
-                </span>
-              </h1>
+            {/* Center - App Title with Indian Typography */}
+            <div className="flex-1 flex justify-center items-center">
+              <div className="text-center">
+                <h1 className="text-3xl md:text-4xl font-bold">
+                  <span className="text-gradient-tricolor animate-gradient-shift">
+                    {t('scheme_sathi')}
+                  </span>
+                </h1>
+                <div className="w-24 h-1 bg-gradient-to-r from-saffron-400 via-white to-indianGreen-400 mx-auto mt-2 rounded-full"></div>
+              </div>
             </div>
 
             {/* Right - Language Toggle and Close Button */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
               <LanguageToggle />
               <button
                 onClick={handleCloseApp}
-                className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                className="p-3 rounded-xl hover:bg-gradient-to-r hover:from-red-100 hover:to-red-200 transition-all duration-300 transform hover:scale-110 group"
                 aria-label="Close app"
               >
-                <X size={24} className="text-gray-700 dark:text-gray-300" />
+                <X size={26} className="text-red-500 group-hover:text-red-600 transition-colors" />
               </button>
             </div>
           </div>
@@ -91,38 +97,62 @@ export default function HomePage() {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Hero Section with Main Actions */}
-        <section className="text-center mb-16">
-          <div className="mb-12">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">
-              <span className="bg-gradient-to-r from-saffron-500 via-gray-700 to-indianGreen-500 bg-clip-text text-transparent">
+        <section className="text-center mb-20">
+          {/* Welcome Message with Indian Flair */}
+          <div className="mb-16 relative">
+            {/* Decorative Elements */}
+            <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 w-32 h-1 bg-gradient-to-r from-transparent via-saffron-400 to-transparent"></div>
+            
+            <h2 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
+              <span className="text-gradient-indian animate-shimmer bg-[length:200%_auto]">
                 Discover Government Schemes
               </span>
             </h2>
-            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed">
-              Your AI-powered companion to find and apply for government schemes. 
-              Get personalized recommendations based on your profile.
+            <p className="text-xl md:text-2xl text-gray-700 max-w-4xl mx-auto leading-relaxed font-medium">
+              आपका AI-संचालित साथी • Your AI-powered companion 
+              <br />
+              <span className="text-lg text-gray-600 mt-2 block">
+                Get personalized recommendations for government schemes designed just for you
+              </span>
             </p>
+            
+            {/* Decorative Lotus Elements */}
+            <div className="flex justify-center items-center mt-8 gap-4">
+              <div className="w-8 h-1 bg-gradient-to-r from-saffron-400 to-transparent rounded-full"></div>
+              <div className="w-4 h-4 bg-gradient-to-br from-saffron-400 to-marigold-500 rounded-full animate-pulse-indian"></div>
+              <div className="w-8 h-1 bg-gradient-to-l from-indianGreen-400 to-transparent rounded-full"></div>
+            </div>
           </div>
 
-          {/* Main Action Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto mb-16">
+          {/* Main Action Cards with Enhanced Indian Design */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto mb-20">
             {mainActions.map((action, index) => (
               <button
                 key={index}
                 onClick={action.onClick}
-                className={`group p-8 rounded-2xl text-white transition-all duration-300 transform hover:scale-105 hover:shadow-xl ${action.color}`}
+                className={`group relative overflow-hidden p-8 rounded-3xl text-white transition-all duration-500 transform hover:scale-105 hover:shadow-cultural ${action.color} border-2 border-white/20`}
               >
-                <div className="flex flex-col items-center text-center">
-                  <div className="p-4 bg-white bg-opacity-20 rounded-full mb-4 group-hover:bg-opacity-30 transition-all">
-                    <action.icon size={32} />
+                {/* Decorative Pattern Overlay */}
+                <div className="absolute inset-0 opacity-10 group-hover:opacity-20 transition-opacity cultural-pattern"></div>
+                
+                {/* Card Content */}
+                <div className="relative flex flex-col items-center text-center">
+                  <div className="p-6 bg-white/25 rounded-2xl mb-6 group-hover:bg-white/35 transition-all duration-300 backdrop-blur-sm shadow-lg">
+                    <action.icon size={40} className="animate-float" />
                   </div>
-                  <h3 className="text-xl font-bold mb-2">{action.label}</h3>
-                  <p className="text-sm opacity-90 leading-relaxed">
+                  <h3 className="text-2xl font-bold mb-3 text-shadow">{action.label}</h3>
+                  <p className="text-base opacity-95 leading-relaxed max-w-xs">
                     {action.description}
                   </p>
+                  
+                  {/* Bottom Accent Line */}
+                  <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 w-16 h-1 bg-white/40 rounded-full group-hover:w-24 transition-all duration-300"></div>
                 </div>
+                
+                {/* Glow Effect */}
+                <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-white/0 via-white/5 to-white/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               </button>
             ))}
           </div>

@@ -11,6 +11,10 @@ import os
 import logging
 import uvicorn
 from pathlib import Path
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 # Import our LangChain RAG system
 try:
@@ -86,10 +90,19 @@ async def startup_event():
     try:
         logger.info("Initializing Gemini Flash RAG system...")
         
+        # Debug: Check if API key is loaded
+        api_key = os.getenv("GOOGLE_API_KEY")
+        if api_key:
+            logger.info(f"✅ Google API key loaded (ends with: ...{api_key[-8:]})")
+        else:
+            logger.error("❌ No Google API key found in environment variables")
+            return
+        
         # Initialize RAG system
         rag_system = SchemeRAGSystem(
-            google_api_key=os.getenv("GOOGLE_API_KEY"),
-            chroma_persist_dir="data/chroma_db"
+            google_api_key=api_key,
+            chroma_persist_dir="data/chroma_db",
+            llm_model=os.getenv("CHAT_MODEL", "gemini-1.5-pro")
         )
         
         # Try to load existing vector store first
@@ -103,6 +116,8 @@ async def startup_event():
         
     except Exception as e:
         logger.error(f"Failed to initialize RAG system: {e}")
+        import traceback
+        traceback.print_exc()
 
 def ensure_rag_system():
     """Ensure RAG system is available"""
@@ -132,8 +147,8 @@ async def setup_rag_system():
     ensure_rag_system()
     
     try:
-        # Load dataset
-        dataset_path = "../data/raw/mega_3000_state_schemes_20250727_150540.json"
+        # Load dataset - using path relative to project root
+        dataset_path = Path(__file__).parent.parent / "data" / "raw" / "mega_3000_state_schemes_20250727_150540.json"
         
         if not Path(dataset_path).exists():
             raise HTTPException(
@@ -147,7 +162,9 @@ async def setup_rag_system():
         documents = rag_system.create_documents_from_schemes(schemes)
         
         # Setup vector store
+        logger.info("Setting up vector store...")
         if not rag_system.setup_vector_store(documents):
+            logger.error("Vector store setup failed")
             raise HTTPException(
                 status_code=500,
                 detail="Failed to setup vector store"
