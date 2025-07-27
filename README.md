@@ -2,9 +2,9 @@
 
 # ✅ COMPLETED (75%)
 1) Core features -
-   [✓]  Language Selection (English/Hindi toggle)
-   []  Language Selection (English/Hindi toggle)
-   [] AI Chatbot (RAG-powered responses)
+   - [✓]  Language Selection (English/Hindi toggle)
+   - []  Language Selection (English/Hindi toggle)
+   - [] AI Chatbot (RAG-powered responses)
    [] Knowledge Base (Government schemes database)
    [] Voice Assistant (Speech-to-text + TTS)
 
