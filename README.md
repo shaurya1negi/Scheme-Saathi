@@ -2,27 +2,27 @@
 
 # ✅ COMPLETED (75%)
 1) Core features -
-   - [✓]  Language Selection (English/Hindi toggle)
-   - [✓]  Language Selection (English/Hindi toggle)
-   - [✓] AI Chatbot (RAG-powered responses)
-   - [✓] Knowledge Base (Government schemes database)
-   - [✓] Voice Assistant (Speech-to-text + TTS)
+   - [X]  Language Selection (English/Hindi toggle)
+   - [X]  Language Selection (English/Hindi toggle)
+   - [X] AI Chatbot (RAG-powered responses)
+   - [X] Knowledge Base (Government schemes database)
+   - [X] Voice Assistant (Speech-to-text + TTS)
 
 2) Bonus Features -
-   - [✓] Save/Load Sessions (Ctrl+S support)
-   - [✓] History (7-session storage)
-   - [✓] Technical Stack Frontend: React/Next.js + TypeScript + Tailwind
-   - [✓] Backend: Gemini AI + LangChain + ChromaDB
-   - [✓] Speech: Web Speech API + Browser TTS
+   - [X] Save/Load Sessions (Ctrl+S support)
+   - [X] History (7-session storage)
+   - [X] Technical Stack Frontend: React/Next.js + TypeScript + Tailwind
+   - [X] Backend: Gemini AI + LangChain + ChromaDB
+   - [X] Speech: Web Speech API + Browser TTS
 
 # ❌ MISSING (25%)
 1) Core Features -
-   - [X] Location Detection (GPS/IP-based filtering)
-   - [X] Time-based Scheme Status (Active/expired tracking)
-   - [X] Bonus Features Family Mode (Proxy applications)
-   - [X] Real-time Updates (Application status notifications)
+   - [] Location Detection (GPS/IP-based filtering)
+   - [] Time-based Scheme Status (Active/expired tracking)
+   - [] Bonus Features Family Mode (Proxy applications)
+   - [] Real-time Updates (Application status notifications)
 2) Backend -
-   - [X] Recommendations (Context-aware suggestions)
+   - [] Recommendations (Context-aware suggestions)
 
 # 🚀 Next Priority
   - [?] Location detection
