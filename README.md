@@ -17,12 +17,12 @@
 
 # ❌ MISSING (25%)
 1) Core Features -
-   - [] Location Detection (GPS/IP-based filtering)
-   - [] Time-based Scheme Status (Active/expired tracking)
-   - [] Bonus Features Family Mode (Proxy applications)
-   - [] Real-time Updates (Application status notifications)
+   - [ ] Location Detection (GPS/IP-based filtering)
+   - [ ] Time-based Scheme Status (Active/expired tracking)
+   - [ ] Bonus Features Family Mode (Proxy applications)
+   - [ ] Real-time Updates (Application status notifications)
 2) Backend -
-   - [] Recommendations (Context-aware suggestions)
+   - [ ] Recommendations (Context-aware suggestions)
 
 # 🚀 Next Priority
   - [?] Location detection
