@@ -1,8 +1,0 @@
-{
-  "/_not-found/page": "app/_not-found/page.js",
-  "/analytics/page": "app/analytics/page.js",
-  "/applications/page": "app/applications/page.js",
-  "/page": "app/page.js",
-  "/api/track-interaction/route": "app/api/track-interaction/route.js",
-  "/api/applications/status/route": "app/api/applications/status/route.js"
-}
