@@ -21,6 +21,7 @@
    - [ ] Time-based Scheme Status (Active/expired tracking)
    - [ ] Bonus Features Family Mode (Proxy applications)
    - [ ] Real-time Updates (Application status notifications)
+   - [ ] Authentication with Popular services
 2) Backend -
    - [ ] Recommendations (Context-aware suggestions)
 
@@ -30,4 +31,4 @@
   - [?] Family mode
   - [?] Smart notifications
 
-# Current Status: 75% Complete 🎉
+# Current Status: 70% Complete 🎉
