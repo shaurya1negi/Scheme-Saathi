@@ -1,0 +1,24 @@
+nohup: ignoring input
+🔄 REBUILDING WITH EXPANDED BUSINESS DATASET
+==================================================
+🔄 Switching to expanded dataset...
+🚀 Rebuilding vector store (this may take a few minutes)...
+✅ Vector store rebuilt successfully!
+
+🧪 Testing business query...
+📊 Found 5 results
+  1. World-Class Education Initiative
+     Category: Education
+  2. World-Class Education Initiative
+     Category: Education
+  3. World-Class Education Initiative
+     Category: Education
+  4. World-Class Education Initiative
+     Category: Education
+  5. World-Class Education Initiative
+     Category: Education
+
+⚠️  Business schemes still not found in results
+
+🔄 Restoring original dataset...
+✅ Original dataset restored

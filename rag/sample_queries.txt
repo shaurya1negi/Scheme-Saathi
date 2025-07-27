@@ -1,0 +1,37 @@
+# Sample Queries for Your RAG System
+
+# Education related
+"What education schemes are available for girl students?"
+"Tell me about scholarship programs in India"
+"Higher education financial assistance schemes"
+
+# Agriculture related  
+"Best farming schemes for small farmers"
+"Organic farming support programs"
+"Agricultural loan schemes in Punjab"
+
+# Employment related
+"Job creation schemes for youth"
+"Self-employment programs for women"
+"Skill development initiatives"
+
+# Healthcare related
+"Healthcare schemes for rural areas"
+"Maternal health programs"
+"Insurance schemes for families"
+
+# State-specific queries
+"What schemes are available in Tamil Nadu?"
+"Kerala government welfare programs"
+"Maharashtra employment schemes"
+
+# Category-specific
+"Financial assistance schemes"
+"Rural development programs" 
+"Technology adoption schemes"
+
+# Tips for better results:
+# - Be specific about location (state/region)
+# - Mention target beneficiaries (farmers, students, women, etc.)
+# - Include category keywords (agriculture, education, healthcare)
+# - Ask about eligibility, benefits, or application process

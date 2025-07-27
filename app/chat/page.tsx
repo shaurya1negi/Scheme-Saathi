@@ -5,85 +5,6 @@ import { ArrowLeft, Send, Bot, User } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useLanguage } from '../../contexts/language_context';
 
-const sampleSchemes = {
-  en: [
-    {
-      id: 1,
-      title: 'PM Kisan Samman Nidhi',
-      description: 'Financial support of ₹6000 per year to small and marginal farmers',
-      eligibility: 'Small & marginal farmers',
-      amount: '₹6,000/year',
-      category: 'Agriculture',
-      color: 'bg-green-500',
-    },
-    {
-      id: 2,
-      title: 'Ayushman Bharat',
-      description: 'Health insurance coverage up to ₹5 lakh per family per year',
-      eligibility: 'Families below poverty line',
-      amount: '₹5,00,000/year',
-      category: 'Healthcare',
-      color: 'bg-blue-500',
-    },
-    {
-      id: 3,
-      title: 'Pradhan Mantri Awas Yojana',
-      description: 'Affordable housing for economically weaker sections',
-      eligibility: 'EWS/LIG families',
-      amount: 'Up to ₹2.5 Lakh subsidy',
-      category: 'Housing',
-      color: 'bg-orange-500',
-    },
-    {
-      id: 4,
-      title: 'Beti Bachao Beti Padhao',
-      description: 'Scheme to address declining child sex ratio and women empowerment',
-      eligibility: 'Girl children',
-      amount: 'Various benefits',
-      category: 'Women & Child',
-      color: 'bg-pink-500',
-    },
-  ],
-  hi: [
-    {
-      id: 1,
-      title: 'पीएम किसान सम्मान निधि',
-      description: 'छोटे और सीमांत किसानों को प्रति वर्ष ₹6000 की वित्तीय सहायता',
-      eligibility: 'छोटे और सीमांत किसान',
-      amount: '₹6,000/वर्ष',
-      category: 'कृषि',
-      color: 'bg-green-500',
-    },
-    {
-      id: 2,
-      title: 'आयुष्मान भारत',
-      description: 'प्रति परिवार प्रति वर्ष ₹5 लाख तक का स्वास्थ्य बीमा कवरेज',
-      eligibility: 'गरीबी रेखा से नीचे के परिवार',
-      amount: '₹5,00,000/वर्ष',
-      category: 'स्वास्थ्य सेवा',
-      color: 'bg-blue-500',
-    },
-    {
-      id: 3,
-      title: 'प्रधान मंत्री आवास योजना',
-      description: 'आर्थिक रूप से कमजोर वर्गों के लिए किफायती आवास',
-      eligibility: 'EWS/LIG परिवार',
-      amount: 'Up to ₹2.5 लाख सब्सिडी',
-      category: 'आवास',
-      color: 'bg-orange-500',
-    },
-    {
-      id: 4,
-      title: 'बेटी बचाओ बेटी पढ़ाओ',
-      description: 'घटते बाल लिंगानुपात और महिला सशक्तिकरण के लिए योजना',
-      eligibility: 'बालिकाएं',
-      amount: 'विभिन्न लाभ',
-      category: 'महिला और बाल',
-      color: 'bg-pink-500',
-    },
-  ],
-};
-
 interface Message {
   id: string;
   text: string;
@@ -97,7 +18,7 @@ export default function ChatPage() {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
-      text: 'Hello! I\'m your Scheme Assistant. I can help you find government schemes based on your needs. What would you like to know?',
+      text: 'Hello! I\'m your AI-powered Scheme Assistant powered by Google Gemini. I can help you find government schemes for education, business, agriculture, healthcare, and more. What would you like to know?',
       sender: 'bot',
       timestamp: new Date(),
     },
@@ -115,10 +36,6 @@ export default function ChatPage() {
     e.preventDefault();
     if (!inputMessage.trim() || isLoading) return;
 
-    // Debug: Log the imported schemes
-    // eslint-disable-next-line no-console
-    console.log('Loaded schemes:', sampleSchemes);
-
     const userMessage: Message = {
       id: Date.now().toString(),
       text: inputMessage,
@@ -131,95 +48,34 @@ export default function ChatPage() {
     setIsLoading(true);
 
     try {
-      // Get schemes from the imported data structure
-      let schemes = [];
-      
-      // Check if sampleSchemes exists and handle different data structures
-      if (!sampleSchemes) {
-        schemes = [];
-      } else if (Array.isArray(sampleSchemes)) {
-        schemes = sampleSchemes;
-      } else if (typeof sampleSchemes === 'object') {
-        // Try to get English schemes first, then fallback to any available language
-        const schemeKeys = Object.keys(sampleSchemes);
-        if (sampleSchemes['en']) {
-          schemes = sampleSchemes['en'];
-        } else if (sampleSchemes['hi']) {
-          schemes = sampleSchemes['hi'];
-        } else if (schemeKeys.length > 0) {
-          schemes = sampleSchemes[schemeKeys[0]] || [];
+      // Call RAG API endpoint (updated to use Node.js server with @google/generative-ai)
+      const ragResponse = await fetch('http://localhost:8000/query', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          query: userMessage.text,
+          include_sources: true
+        })
+      });
+
+      const data = await ragResponse.json();
+      console.log('RAG API response:', data);
+
+      let replyText = '';
+      if (data.success && data.answer) {
+        replyText = data.answer;
+        
+        // Add source schemes information
+        if (data.sources && data.sources.length > 0) {
+          replyText += '\n\n📋 Related Schemes:\n';
+          data.sources.slice(0, 3).forEach((source, index) => {
+            replyText += `${index + 1}. ${source.scheme_name}\n   Category: ${source.category}\n   State: ${source.state}\n\n`;
+          });
         }
-      }
-      
-      // Debug: Log the schemes being sent to Gemini
-      // eslint-disable-next-line no-console
-      console.log('Schemes sent to Gemini:', schemes);
-      console.log('Schemes count:', schemes.length);
-
-      // If no schemes found, provide fallback message
-      if (!schemes || schemes.length === 0) {
-        const botResponse: Message = {
-          id: (Date.now() + 1).toString(),
-          text: 'Sorry, I cannot load the government schemes data. Please check the data source.',
-          sender: 'bot',
-          timestamp: new Date(),
-        };
-        setMessages(prev => [...prev, botResponse]);
-        setIsLoading(false);
-        return;
+      } else {
+        replyText = 'Sorry, I could not find relevant government schemes for your query.';
       }
 
-      // Present schemes as a simple readable list
-      const schemesContext = schemes.map((s, i) => 
-        `${i + 1}. ${s.title}\n   Description: ${s.description}\n   Eligibility: ${s.eligibility}\n   Amount: ${s.amount}\n   Category: ${s.category}`
-      ).join('\n\n');
-
-      // Create a single comprehensive prompt that includes everything
-      const fullPrompt = `You are a helpful assistant for government schemes in India. Based on the user's question, recommend the most suitable government scheme from the list below.
-
-Available Government Schemes:
-${schemesContext}
-
-User Question: ${userMessage.text}
-
-Instructions:
-- Analyze the user's question and match it to the most relevant scheme(s) from the list above
-- Provide the scheme name, description, eligibility criteria, and benefit amount
-- If no scheme matches, say "I don't have information about that specific scheme"
-- Keep response under 200 words
-- No additional formatting or usage of * or **
-- Refer to the user first-person
-- Directlky answer without no preamble
-- Be helpful and specific`;
-
-      // Debug: Log the full prompt
-      // eslint-disable-next-line no-console
-      console.log('Full prompt to Gemini:', fullPrompt);
-
-      const apiKey = 'AIzaSyBo75KPqzXp4lO9tz9yx9SfawkAq1MhUYY';
-      const geminiRes = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contents: [
-              { parts: [
-                  { text: fullPrompt }
-                ] }
-            ]
-          }),
-        }
-      );
-
-      // Debug: Log the raw Gemini response
-      const data = await geminiRes.json();
-      // eslint-disable-next-line no-console
-      console.log('Gemini raw response:', data);
-      let replyText = data.candidates?.[0]?.content?.parts?.[0]?.text;
-      if (!replyText || typeof replyText !== 'string') {
-        replyText = 'No response from Gemini.';
-      }
       const botResponse: Message = {
         id: (Date.now() + 1).toString(),
         text: replyText,
@@ -233,7 +89,7 @@ Instructions:
         ...prev,
         {
           id: (Date.now() + 2).toString(),
-          text: 'Sorry, there was an error connecting to Gemini.',
+          text: 'Sorry, there was an error connecting to the scheme database.',
           sender: 'bot',
           timestamp: new Date(),
         },

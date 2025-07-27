@@ -1,0 +1,38 @@
+# Python Web Scraping Requirements
+# Compatible with Python 3.13.2+ (Tested on 3.13.2)
+# Tested and verified for myScheme Portal scraper
+
+# Core web scraping libraries
+requests==2.31.0
+beautifulsoup4==4.12.3
+lxml>=6.0.0
+
+# Data processing and analysis
+pandas>=2.3.1
+numpy>=2.3.2
+
+# Progress bars and utilities
+tqdm==4.66.4
+
+# Database connectors (optional - uncomment what you need)
+# MongoDB
+# pymongo==4.7.3
+
+# PostgreSQL
+# psycopg2-binary==2.9.9
+
+# SQLite is built into Python - no installation needed
+
+# Additional utilities for robust scraping
+urllib3==2.2.2
+certifi==2024.6.2
+charset-normalizer==3.3.2
+idna==3.7
+
+# HTML parsing enhancements
+html5lib==1.1
+soupsieve==2.5
+
+# Optional: For advanced features
+# python-dateutil==2.9.0
+# pytz==2024.1
