@@ -1,3 +1,13 @@
 {
-  "/page": "app/page.js"
+  "/_not-found/page": "app/_not-found/page.js",
+  "/ocr/page": "app/ocr/page.js",
+  "/page": "app/page.js",
+  "/api/user/stats/route": "app/api/user/stats/route.js",
+  "/voice/page": "app/voice/page.js",
+  "/api/metrics/app/route": "app/api/metrics/app/route.js",
+  "/api/search/smart/route": "app/api/search/smart/route.js",
+  "/api/analytics/track/route": "app/api/analytics/track/route.js",
+  "/api/schemes/search/route": "app/api/schemes/search/route.js",
+  "/chat/page": "app/chat/page.js",
+  "/api/chat/route": "app/api/chat/route.js"
 }

@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
+import { createActionClient } from '../../../../lib/supabase-server';
 import { cookies } from 'next/headers';
 
 // Real-time application status tracking
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createRouteHandlerClient({ cookies });
+    const supabase = createActionClient();
     const { searchParams } = new URL(request.url);
     const applicationId = searchParams.get('applicationId');
 
@@ -75,7 +75,7 @@ export async function GET(request: NextRequest) {
 
 // Update application status (for admin/system use)
 export async function POST(request: NextRequest) {
-  const supabase = createRouteHandlerClient({ cookies });
+  const supabase = createActionClient();
   
   try {
     const { applicationId, newStatus, notes, estimatedDays } = await request.json();

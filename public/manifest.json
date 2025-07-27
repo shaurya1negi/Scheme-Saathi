@@ -1,0 +1,185 @@
+{
+  "name": "Scheme Saathi - Government Schemes Portal",
+  "short_name": "Scheme Saathi",
+  "description": "Your trusted companion for discovering and applying to government schemes in India. Access 800+ schemes with AI-powered recommendations and multilingual support.",
+  "version": "1.0.0",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "theme_color": "#667eea",
+  "background_color": "#ffffff",
+  "scope": "/",
+  "lang": "en-IN",
+  "dir": "ltr",
+  "categories": ["government", "utilities", "finance", "education"],
+  "icons": [
+    {
+      "src": "/logo-72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/logo-96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/logo-128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/logo-144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/logo-152.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/logo-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/logo-384.png",
+      "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/logo-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshots/desktop-home.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Home page showing scheme categories and search"
+    },
+    {
+      "src": "/screenshots/mobile-schemes.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Browse government schemes on mobile"
+    },
+    {
+      "src": "/screenshots/mobile-chat.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "AI-powered chat assistance"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Search Schemes",
+      "short_name": "Search",
+      "description": "Find government schemes quickly",
+      "url": "/schemes?search=true",
+      "icons": [
+        {
+          "src": "/icons/search-96.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Chat Assistant", 
+      "short_name": "Chat",
+      "description": "Get help from AI assistant",
+      "url": "/chat",
+      "icons": [
+        {
+          "src": "/icons/chat-96.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "My Applications",
+      "short_name": "Applications",
+      "description": "View your scheme applications",
+      "url": "/profile?tab=applications",
+      "icons": [
+        {
+          "src": "/icons/applications-96.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Voice Search",
+      "short_name": "Voice",
+      "description": "Search using voice commands",
+      "url": "/voice",
+      "icons": [
+        {
+          "src": "/icons/voice-96.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    }
+  ],
+  "related_applications": [
+    {
+      "platform": "play",
+      "url": "https://play.google.com/store/apps/details?id=gov.india.schemes.saathi",
+      "id": "gov.india.schemes.saathi"
+    }
+  ],
+  "prefer_related_applications": false,
+  "features": [
+    "Cross Platform",
+    "Background Sync",
+    "Push Notifications",
+    "Offline Support",
+    "Voice Search",
+    "Multilingual Support",
+    "AI Assistant",
+    "Real-time Updates"
+  ],
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+  "protocol_handlers": [
+    {
+      "protocol": "web+scheme",
+      "url": "/scheme/%s"
+    }
+  ],
+  "file_handlers": [
+    {
+      "action": "/upload",
+      "accept": {
+        "image/*": [".jpg", ".jpeg", ".png", ".gif"],
+        "application/pdf": [".pdf"],
+        "application/msword": [".doc"],
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document": [".docx"]
+      }
+    }
+  ],
+  "launch_handler": {
+    "client_mode": "navigate-existing"
+  },
+  "handle_links": "preferred",
+  "capture_links": "existing-client-navigate"
+}

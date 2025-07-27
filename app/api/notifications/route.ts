@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
+import { createActionClient } from '../../../lib/supabase-server';
 
 export async function GET(request: NextRequest) {
-  const supabase = createRouteHandlerClient({ cookies });
+  const supabase = createActionClient();
   const { searchParams } = new URL(request.url);
   const page = parseInt(searchParams.get('page') || '1');
   const limit = parseInt(searchParams.get('limit') || '20');
@@ -57,7 +56,7 @@ export async function GET(request: NextRequest) {
 
 // Mark notifications as read
 export async function POST(request: NextRequest) {
-  const supabase = createRouteHandlerClient({ cookies });
+  const supabase = createActionClient();
   
   try {
     const { notificationIds, markAllRead } = await request.json();
@@ -97,7 +96,7 @@ export async function POST(request: NextRequest) {
 
 // Create notification (for system use)
 export async function PUT(request: NextRequest) {
-  const supabase = createRouteHandlerClient({ cookies });
+  const supabase = createActionClient();
   
   try {
     const { 
